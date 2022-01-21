@@ -10,11 +10,49 @@ public class Parser {
     }
 
     public Visitable start(Visitable parameter) {
-
+        try {
+            switch (eingabe.charAt(this.position)) {
+                case '#':
+                    match('#');
+                    assertEndOfInput();
+                    return new OperandNode("#");
+                case '(':
+                    match('(');
+                    Visitable leaf = new OperandNode("#");
+                default:
+                    throw new RuntimeException();
+            }
+        } catch (RuntimeException runtimeEx) {
+            System.out.println("Kein valides File");
+        }
         return null;
     }
 
-    private Visitable alphanum(Visitable parameter) {
+    private Visitable RegEx(Visitable visit) {
+        return null;
+    }
+
+    private Visitable RE(Visitable visit) {
+        return null;
+    }
+
+    private Visitable Term(Visitable visit) {
+        return null;
+    }
+
+    private Visitable Factor(Visitable visit) {
+        return null;
+    }
+
+    private Visitable Hop(Visitable visit) {
+        return null;
+    }
+
+    private Visitable Elem(Visitable visit) {
+        return null;
+    }
+
+    private Visitable Alphanum(Visitable visit) {
         return null;
     }
 
