@@ -9,7 +9,7 @@ public class Parser {
         this.position = 0;
     }
 
-    public Visitable start(Visitable parameter) {
+    public Visitable Start() {
         try {
             switch (eingabe.charAt(this.position)) {
                 case '#':
@@ -19,6 +19,11 @@ public class Parser {
                 case '(':
                     match('(');
                     Visitable leaf = new OperandNode("#");
+                    Visitable retur = RegEx(null);
+                    Visitable root = new BinOpNode("°", retur, leaf);
+                    match(')');
+                    match('#');
+                    assertEndOfInput();
                 default:
                     throw new RuntimeException();
             }
@@ -29,31 +34,96 @@ public class Parser {
     }
 
     private Visitable RegEx(Visitable visit) {
-        return null;
+        Visitable term = Term(null);
+        return RE(term);
+
     }
 
     private Visitable RE(Visitable visit) {
+        try {
+            switch (eingabe.charAt(position)) {
+                case '|':
+                    match('|');
+                    Visitable term = Term(null);
+                    Visitable root = new BinOpNode("|", visit, term);
+                    return RE(root);
+                case ')':
+                    return visit;
+                default:
+                    throw new RuntimeException();
+            }
+        } catch (RuntimeException re) {
+            System.out.println("kein richtiges Zeichen bei RE auflösung");
+        }
         return null;
     }
 
     private Visitable Term(Visitable visit) {
-        return null;
+        if (eingabe.charAt(position) == '(' || Character.isLetterOrDigit(eingabe.charAt(position))) {
+            Visitable factor = Factor(null);
+            Visitable root;
+            if (visit != null) {
+                root = new BinOpNode("°", visit, factor);
+
+            } else {
+                root = factor;
+            }
+            return Term(root);
+        } else if (eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
+            return visit;
+        } else {
+            throw new RuntimeException("Syntax Error!");
+        }
     }
 
     private Visitable Factor(Visitable visit) {
-        return null;
+        if (Character.isLetterOrDigit(eingabe.charAt(position)) || eingabe.charAt(position) == '(') {
+            Visitable ret = Elem(null);
+            return Hop(ret);
+        } else {
+            throw new RuntimeException("Syntax error !");
+        }
     }
 
     private Visitable Hop(Visitable visit) {
-        return null;
+        if (eingabe.charAt(position) == '*') {
+            match('*');
+            return new UnaryOpNode("*", visit);
+        } else if (eingabe.charAt(position) == '+') {
+            match('+');
+            return new UnaryOpNode("+", visit);
+        } else if (eingabe.charAt(position) == '?') {
+            match('?');
+            return new UnaryOpNode("?", visit);
+        } else if (Character.isLetterOrDigit(eingabe.charAt(position)) || eingabe.charAt(position) == '(' || eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
+            return visit;
+        } else {
+            throw new RuntimeException("Syntax error !");
+        }
     }
 
     private Visitable Elem(Visitable visit) {
-        return null;
+        if (eingabe.charAt(position) == '(') {
+            match('(');
+            Visitable ret = RegEx(null);
+            match(')');
+            return ret;
+        } else if (Character.isLetterOrDigit(eingabe.charAt(position))) {
+            return Alphanum(null);
+        } else {
+            throw new RuntimeException("Syntax error !");
+        }
     }
 
     private Visitable Alphanum(Visitable visit) {
-        return null;
+        char check = eingabe.charAt(position);
+        if (Character.isLetterOrDigit(check)) {
+            match(check);
+        } else {
+            throw new RuntimeException("Syntax error !");
+        }
+
+        return new OperandNode(String.valueOf(check));
     }
 
     private void match(char symbol) {
