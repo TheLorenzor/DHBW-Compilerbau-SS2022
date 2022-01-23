@@ -10,27 +10,24 @@ public class Parser {
     }
 
     public Visitable Start() {
-        try {
-            switch (eingabe.charAt(this.position)) {
-                case '#':
-                    match('#');
-                    assertEndOfInput();
-                    return new OperandNode("#");
-                case '(':
-                    match('(');
-                    Visitable leaf = new OperandNode("#");
-                    Visitable retur = RegEx(null);
-                    Visitable root = new BinOpNode("°", retur, leaf);
-                    match(')');
-                    match('#');
-                    assertEndOfInput();
-                default:
-                    throw new RuntimeException();
+        switch (eingabe.charAt(this.position)) {
+            case '#' -> {
+                match('#');
+                assertEndOfInput();
+                return new OperandNode("#");
             }
-        } catch (RuntimeException runtimeEx) {
-            System.out.println("Kein valides File");
+            case '(' -> {
+                match('(');
+                Visitable leaf = new OperandNode("#");
+                Visitable retur = RegEx(null);
+                Visitable root = new BinOpNode("°", retur, leaf);
+                match(')');
+                match('#');
+                assertEndOfInput();
+                return root;
+            }
+            default -> throw new RuntimeException();
         }
-        return null;
     }
 
     private Visitable RegEx(Visitable visit) {
@@ -40,22 +37,17 @@ public class Parser {
     }
 
     private Visitable RE(Visitable visit) {
-        try {
-            switch (eingabe.charAt(position)) {
-                case '|':
-                    match('|');
-                    Visitable term = Term(null);
-                    Visitable root = new BinOpNode("|", visit, term);
-                    return RE(root);
-                case ')':
-                    return visit;
-                default:
-                    throw new RuntimeException();
-            }
-        } catch (RuntimeException re) {
-            System.out.println("kein richtiges Zeichen bei RE auflösung");
+        switch (eingabe.charAt(position)) {
+            case '|':
+                match('|');
+                Visitable term = Term(null);
+                Visitable root = new BinOpNode("|", visit, term);
+                return RE(root);
+            case ')':
+                return visit;
+            default:
+                throw new RuntimeException();
         }
-        return null;
     }
 
     private Visitable Term(Visitable visit) {
