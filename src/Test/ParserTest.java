@@ -16,9 +16,10 @@ public class ParserTest {
     @Order(1)
     @DisplayName("Test Parser correct Regular Expression")
     public void rightSyntax() {
+
+
         Parser parser = new Parser("(aa(b|c)*)#");
         Visitable toTest = parser.Start();
-
         Visitable verficiation = new BinOpNode("°",
                 new BinOpNode("°",
                         new BinOpNode("°",
@@ -29,9 +30,10 @@ public class ParserTest {
                                 )
                             )
          ) ,new OperandNode("#"));
-
         assertTrue(equals(toTest,verficiation));
 
+
+        //check different string and check whether they are different if they have different values
         Parser parser2 = new Parser("(aaa(b|c)*)#");
         Visitable toTest2 = parser2.Start();
 
@@ -53,6 +55,7 @@ public class ParserTest {
     @Order(2)
     @DisplayName("Test Parser wrong Regular Expression")
     public void wrongSyntax() {
+        //check whether it throws an error
         Parser parser = new Parser("(aa(b|c*)#");
         boolean error = false;
         try {
@@ -61,7 +64,8 @@ public class ParserTest {
             error = true;
         }
         assertTrue(error);
-
+        //check the different Error messages
+        //if the # is missing
         String errorMessage="";
         Parser parser2 = new Parser("(aa(b|c)*)");
         try {
@@ -72,6 +76,17 @@ public class ParserTest {
         }
         assertTrue(errorMessage=="End of input reached !");
         assertTrue(error);
+        //if the String is empty
+        errorMessage = "";
+        Parser parser3 = new Parser("");
+        try {
+            parser3.Start();
+        } catch (RuntimeException ex) {
+            errorMessage = ex.getMessage();
+            error = true;
+        }
+        assertTrue(errorMessage=="String index out of range: 0");
+
 
     }
 
