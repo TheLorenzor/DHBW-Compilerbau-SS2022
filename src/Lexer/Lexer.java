@@ -2,13 +2,20 @@ package Lexer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+
+import DefiniteFiniteAutomata.*;
+import Visitor_2.FollowposTableEntry;
+import groovyjarjarantlr4.runtime.DFA;
 
 public class Lexer
 {
-    private Map<DFAState, Map<Character, DFAState>> stateTransitionTable = new HashMap<>();;
+    private Map<DFAState, Map<Character, DFAState>> stateTransitionTable = new HashMap<>();
+
     public Lexer(Map<DFAState, Map<Character, DFAState>> stateTransitionTable)
     {
         this.stateTransitionTable = stateTransitionTable;
+
     }
 
 
@@ -18,12 +25,10 @@ public class Lexer
         char[] letters = word.toCharArray();
         Object[] test =  stateTransitionTable.keySet().toArray();
         DFAState state = getState(test, 0);
-        for(int i = 0; i < letters.length; i++){
-            char letter = letters[i];
-            if(stateTransitionTable.get(state).get(letter) != null) {
+        for (char letter : letters) {
+            if (stateTransitionTable.get(state).get(letter) != null) {
                 state = stateTransitionTable.get(state).get(letter);
-            }
-            else return false;
+            } else return false;
         }
         return state.isAcceptingState;
     }
