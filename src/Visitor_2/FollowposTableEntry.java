@@ -6,11 +6,12 @@ import java.util.Set;
 public class FollowposTableEntry {
     public final int position;
     public final String symbol;
-    public final Set<Integer> followpos = new HashSet<>();
+    public Set<Integer> followpos;
     public FollowposTableEntry(int position, String symbol)
     {
         this.position = position;
         this.symbol = symbol;
+        followpos  = new HashSet<Integer>();        //mit leerer Menge initialisieren
     }
     @Override
     public boolean equals(Object obj)
@@ -35,5 +36,10 @@ public class FollowposTableEntry {
         hashCode = 31 * hashCode + this.symbol.hashCode();
         hashCode = 31 * hashCode + this.followpos.hashCode();
         return hashCode;
+    }
+
+    public void Setfollowpos(Integer nValue)
+    {
+        followpos.add(nValue);
     }
 }
